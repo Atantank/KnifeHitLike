@@ -1,0 +1,51 @@
+{
+    "name": "InputController",
+    "maps": [
+        {
+            "name": "Clicker",
+            "id": "6ef2afa7-3d02-4d0c-a6e1-75deef77e2ba",
+            "actions": [
+                {
+                    "name": "Tap",
+                    "type": "Button",
+                    "id": "c7f08cae-25fb-4c74-bf87-df6b984df93e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "ccd315a0-e275-471d-8ae1-ac7b0b2dd684",
+                    "path": "<Touchscreen>/primaryTouch/tap",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Clicker",
+                    "action": "Tap",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8978e355-ee26-4076-8505-a8d402208caa",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Clicker",
+                    "action": "Tap",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": [
+        {
+            "name": "Clicker",
+            "bindingGroup": "Clicker",
+            "devices": []
+        }
+    ]
+}

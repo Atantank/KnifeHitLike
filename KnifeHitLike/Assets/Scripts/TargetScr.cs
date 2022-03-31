@@ -4,28 +4,37 @@ using UnityEngine;
 
 public class TargetScr : MonoBehaviour
 {
-    [SerializeField] private GameManager gameManager;
-    private float rotationSpeed;
+    private GameManager gameManager;
     private int targetLifes;
 
     void Awake()
     {
-        
+		gameManager = GameManager.GM;
+		targetLifes = gameManager.TargetLifes;
+		Vibration.Init();
     }
 
-    public void Init(GameManager _gameManager, float _rotationSpeed)
+    public void SpinTheTarget()
     {
-        gameManager = _gameManager;
-		rotationSpeed = _rotationSpeed;
-    }
-    
-    void Start()
-    {
-        
+		transform.Rotate(0, 0, -1 * Time.deltaTime * gameManager.TargetRotationSpeed);
     }
 
-    void FixedUpdate()
-    {
-        
-    }
+	void OnTriggerEnter2D(Collider2D _other)
+	{
+		if (_other.gameObject.tag == "Knife")
+		{
+			Vibration.Vibrate();
+			targetLifes--;
+			if (targetLifes + gameManager.StuckedKnifesCount <= 0)
+			{
+				BlowUp();
+				gameManager.TargetBlowingUp();
+			}
+		}
+	}
+
+	void BlowUp()
+	{
+		this.gameObject.SetActive(false);
+	}
 }
