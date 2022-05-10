@@ -1,15 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 using KnifeHitLikeLib;
 
 public class GameManager : MonoBehaviour
 {
     [SerializeField] Canvas mainScreen;
+    [SerializeField] Canvas shopScreen;
     [SerializeField] Canvas gameScreen;
     [SerializeField] Canvas gameMenu;
     [SerializeField] GameObject gameObjects;
+    [SerializeField] TextMeshProUGUI scoreInLevel;
+    [SerializeField] TextMeshProUGUI scoreInStart;
+    public int GameScore 
+    { 
+        set 
+        {
+			scoreInLevel.text = value.ToString();
+			scoreInStart.text = value.ToString();
+        } 
+    }
 
     [SerializeField] private TargetScr targetPref;
 	[SerializeField] private float targetRotationSpeed;
@@ -38,8 +50,11 @@ public class GameManager : MonoBehaviour
     private List<int> freePlaces;
     private Quaternion zeroQuaternion = new Quaternion(0, 0, 0, 0);
 
+    private int tmpLevelScore;
+
     void Awake()
     {
+		tmpLevelScore = 0;
         GM = this;
 		controller = new InputController();
 		controller.Clicker.Tap.started += context => Throw();
@@ -56,14 +71,21 @@ public class GameManager : MonoBehaviour
 		controller.Disable();
 	}
 
+    void HideAllScreens()
+    {
+		mainScreen.gameObject.SetActive(false);
+		gameScreen.gameObject.SetActive(false);
+		gameMenu.gameObject.SetActive(false);
+		gameObjects.gameObject.SetActive(false);
+		shopScreen.gameObject.SetActive(false);
+    }
+
     public void GoMainScreen()
     {
 		Time.timeScale = 0;
 		//controller.Clicker.Tap.started -= context => Throw();
 		//controller.Disable();
-		mainScreen.gameObject.SetActive(true);
-        gameScreen.gameObject.SetActive(false);
-		gameObjects.gameObject.SetActive(false);
+        HideAllScreens();
         if (target)
         {
             GameObject.Destroy(target.gameObject);
@@ -72,15 +94,21 @@ public class GameManager : MonoBehaviour
                 GameObject.Destroy(k.gameObject);
             }
         }
+		mainScreen.gameObject.SetActive(true);
     }
 
     public void GoPlayGame()
     {
-		mainScreen.gameObject.SetActive(false);
+		HideAllScreens();
 		gameScreen.gameObject.SetActive(true);
-        gameMenu.gameObject.SetActive(false);
 		gameObjects.gameObject.SetActive(true);
 		LoadLevel();
+    }
+
+    public void GoShop()
+    {
+		HideAllScreens();
+		shopScreen.gameObject.SetActive(true);
     }
 
     public void PressMenuButton()
@@ -105,8 +133,13 @@ public class GameManager : MonoBehaviour
         GoPlayGame();
     }
 
+    public void BuyShopItem()
+    {}
+
 	void LoadLevel()
 	{
+        GameScore = ProgressScr.GameScore;
+
 		//controller.Clicker.Tap.started += context => Throw();
 		//controller.Enable();
 		allKnifes = new List<KnifeScr>();
@@ -170,16 +203,37 @@ public class GameManager : MonoBehaviour
 
     public void TargetBlowingUp()
     {
-        print("Win!");
 		Time.timeScale = 0;
+		ShowEndLevelMessage(true);
     }
 
 	public void HitKnife()
 	{
-		print("Lose!");
 		Vibration.Vibrate();
         Time.timeScale = 0;
+		ShowEndLevelMessage(false);
 	}
+
+    void ShowEndLevelMessage(bool isWon)
+    {
+        if(isWon)
+        {
+			print("Win!");
+        }
+        else
+        {
+			print("Lose!");
+        }
+
+        ProgressScr.GameScore += tmpLevelScore;
+        GoMainScreen();
+    }
+
+    public void AppleHit()
+    {
+		tmpLevelScore += 1;
+		GameScore = ProgressScr.GameScore + tmpLevelScore;
+    }
 
     void FixedUpdate()
     {
